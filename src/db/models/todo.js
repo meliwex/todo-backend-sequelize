@@ -1,16 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
-  const todo = sequelize.define('todo', {
-    title: DataTypes.STRING(400),
-    description: DataTypes.TEXT,
+
+  const Todo = sequelize.define('Todo', {
+    title: { type: DataTypes.STRING(400), allowNull: false },
+    description: { type: DataTypes.TEXT, allowNull: true },
   }, 
   {
+    underscored: true,
     paranoid: true,
-    deletedAt: "deleted_at",
-
     timestamps: true,
-    updatedAt: 'updated_at',
-    createdAt: 'created_at',
   });
 
-  return todo;
+  return Todo;
 };

@@ -1,5 +1,4 @@
-const db = require("../db/models")
-const { todo } = db;
+const { Todo } = require("../db/models")
 
 
 exports.createTodo = async (req, res) => {
@@ -9,11 +8,11 @@ exports.createTodo = async (req, res) => {
       description: req.body.description
     };
 
-    const result = await todo.create(obj);
+    const result = await Todo.create(obj);
 
     res.status(201).json({
       success: true,
-      result: result.dataValues
+      result: result
     });
 
   } catch (err) {
@@ -29,7 +28,7 @@ exports.getTodos = async (req, res) => {
   try {
     const { limit, offset } = req.query;
 
-    const result = await todo.findAll({
+    const result = await Todo.findAll({
       attributes: ['title', 'description'],
       offset: offset,
       limit: limit
@@ -53,14 +52,12 @@ exports.getTodoById = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const result = await todo.findAll({
-      attributes: ["id", 'title', 'description'],
-      where: {
-        id: id,
-      }
+    const result = await Todo.findByPk(id, {
+      attributes: ["title", "description"],
     });
 
-    if (result.length === 0) {
+
+    if (result === null) {
       throw "Not found"
     }
 
@@ -94,20 +91,19 @@ exports.updateTodo = async (req, res) => {
 
     const id = req.params.id;
 
-    const result = await todo.update(
-      obj,
-      {
-        where: {
-          id: id
-        },
-        returning: true
-      }
-    );
+    const todo = await Todo.findByPk(id);
+
+    if (todo === null) {
+      throw "Not found"
+    }
+
+
+    await todo.update(obj);
 
 
     res.status(200).json({
       success: true,
-      result: result[1]
+      result: todo
     });
 
   } catch (err) {
@@ -123,17 +119,18 @@ exports.deleteTodo = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const result = await todo.destroy({
-      where: {
-        id: id,
-      },
-      returning: true 
-    });
+    const todo = await Todo.findByPk(id);
+
+    if (todo === null) {
+      throw "Not found"
+    }
+
+    await todo.destroy();
 
 
     res.status(200).json({
       success: true,
-      result: result
+      result: todo 
     });
 
   } catch (err) {

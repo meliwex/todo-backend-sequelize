@@ -1,5 +1,6 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
+    
     await queryInterface.createTable(
       'todos',
       {
@@ -9,15 +10,15 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER
         },
-        title: Sequelize.STRING(400),
-        description: Sequelize.TEXT,
+        title: { type: Sequelize.STRING(400), allowNull: false },
+        description: { type: Sequelize.TEXT, allowNull: true },
         created_at: {
-          allowNull: false,
-          type: Sequelize.DATE
+          type: Sequelize.DATE,
+          allowNull: false
         },
         updated_at: {
-          allowNull: false,
-          type: Sequelize.DATE
+          type: Sequelize.DATE,
+          allowNull: false
         },
         deleted_at: {
           type: Sequelize.DATE
